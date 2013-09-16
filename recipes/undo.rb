@@ -1,7 +1,7 @@
 #
 # Cookbook Name:: ntp
-# Recipe:: undo 
-# Author:: Eric G. Wolfe 
+# Recipe:: undo
+# Author:: Eric G. Wolfe
 #
 # Copyright 2012, Eric G. Wolfe
 # Copyright 2009, Opscode, Inc
@@ -20,7 +20,7 @@
 
 service node['ntp']['service'] do
   supports :status => true, :restart => true
-  action [ :stop, :disable ]
+  action [:stop, :disable]
 end
 
 node['ntp']['packages'].each do |ntppkg|
