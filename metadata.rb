@@ -4,13 +4,15 @@ maintainer_email  "cookbooks@opscode.com"
 license           "Apache 2.0"
 description       "Installs and configures ntp as a client or server"
 long_description  IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version           "1.3.2"
+version           "1.4.1"
 
 recipe "ntp", "Installs and configures ntp either as a server or client"
 
-%w{ ubuntu debian redhat centos fedora scientific amazon oracle freebsd }.each do |os|
+%w{ ubuntu debian redhat centos fedora scientific amazon oracle freebsd windows }.each do |os|
   supports os
 end
+
+suggests "windows"
 
 attribute "ntp",
   :display_name => "NTP",
@@ -21,7 +23,7 @@ attribute "ntp/servers",
   :display_name => "NTP Servers",
   :description => "Array of servers we should talk to",
   :type => "array",
-  :default => ["0.pool.ntp.org", "1.pool.ntp.org", "2.pool.ntp.org", "3.pool.ntp.org" ],
+  :default => ["0.pool.ntp.org", "1.pool.ntp.org", "2.pool.ntp.org", "3.pool.ntp.org"],
   :required => "recommended"
 
 attribute "ntp/peers",

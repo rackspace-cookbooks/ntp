@@ -1,7 +1,7 @@
 #
 # Cookbook Name:: ntp
-# Recipe:: ntpdate 
-# Author:: Eric G. Wolfe 
+# Recipe:: ntpdate
+# Author:: Eric G. Wolfe
 #
 # Copyright 2012, Eric G. Wolfe
 # Copyright 2009, Opscode, Inc
@@ -18,19 +18,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Package declaration a bit redundant,
-# but not if this runs as a standalone recipe
-package "ntpdate" do
-  only_if { node['platform'] == "debian" or node['platform'] == "ubuntu" }
-end
+# ntpdate is only available as a separate package on debian-based distros.
+# Other distributions should use the default recipe.
 
-# Template is only meaningful on Debian family platforms
-template "/etc/default/ntpdate" do
-  owner node['ntp']['conf_owner']
-  group node['ntp']['conf_group']
-  mode "0644"
-  variables(
-    :disable => node['ntp']['ntpdate']['disable']
-  )
-  only_if { node['platform'] == "debian" or node['platform'] == "ubuntu" }
+if platform_family?("debian")
+  package "ntpdate"
+
+  unless node['ntp']['servers'].size > 0
+    node.default['ntp']['servers'] = [
+      "0.pool.ntp.org",
+      "1.pool.ntp.org",
+      "2.pool.ntp.org",
+      "3.pool.ntp.org"
+    ]
+    log "No NTP servers specified, using default ntp.org server pools"
+  end
+
+  template "/etc/default/ntpdate" do
+    owner node['ntp']['conf_owner']
+    group node['ntp']['conf_group']
+    mode "0644"
+    variables(
+      :disable => node['ntp']['ntpdate']['disable']
+    )
+  end
 end
