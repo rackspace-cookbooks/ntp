@@ -18,8 +18,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-if node['platform'] == "windows"
-  include_recipe "ntp::windows_client"
+if platform_family?('windows')
+  include_recipe 'ntp::windows_client'
 else
   node['ntp']['packages'].each do |ntppkg|
     package ntppkg
@@ -29,36 +29,36 @@ else
     directory ntpdir do
       owner node['ntp']['var_owner']
       group node['ntp']['var_group']
-      mode 00755
+      mode  '0755'
     end
   end
 
   cookbook_file node['ntp']['leapfile'] do
     owner node['ntp']['conf_owner']
     group node['ntp']['conf_group']
-    mode 00644
+    mode  '0644'
   end
 end
 
 unless node['ntp']['servers'].size > 0
   node.default['ntp']['servers'] = [
-    "0.pool.ntp.org",
-    "1.pool.ntp.org",
-    "2.pool.ntp.org",
-    "3.pool.ntp.org"
+    '0.pool.ntp.org',
+    '1.pool.ntp.org',
+    '2.pool.ntp.org',
+    '3.pool.ntp.org'
   ]
-  log "No NTP servers specified, using default ntp.org server pools"
+  log 'No NTP servers specified, using default ntp.org server pools'
 end
 
 template node['ntp']['conffile'] do
-  source "ntp.conf.erb"
-  owner node['ntp']['conf_owner']
-  group node['ntp']['conf_group']
-  mode 00644
+  source   'ntp.conf.erb'
+  owner    node['ntp']['conf_owner']
+  group    node['ntp']['conf_group']
+  mode     '0644'
   notifies :restart, "service[#{node['ntp']['service']}]"
 end
 
 service node['ntp']['service'] do
   supports :status => true, :restart => true
-  action [:enable, :start]
+  action   [:enable, :start]
 end
