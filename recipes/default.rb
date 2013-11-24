@@ -4,7 +4,7 @@
 # Author:: Joshua Timberman (<joshua@opscode.com>)
 # Author:: Tim Smith (<tsmith@limelight.com>)
 #
-# Copyright 2009, Opscode, Inc
+# Copyright 2009-2013, Opscode, Inc
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -38,6 +38,8 @@ else
     group node['ntp']['conf_group']
     mode  '0644'
   end
+
+  include_recipe 'ntp::apparmor' if node['ntp']['apparmor_enabled']
 end
 
 unless node['ntp']['servers'].size > 0
@@ -50,12 +52,49 @@ unless node['ntp']['servers'].size > 0
   log 'No NTP servers specified, using default ntp.org server pools'
 end
 
+if node['ntp']['listen'].nil? && !node['ntp']['listen_network'].nil?
+  if node['ntp']['listen_network'] == 'primary'
+    node.set['ntp']['listen'] = node['ipaddress']
+  else
+    require 'ipaddr'
+    net = IPAddr.new(node['ntp']['listen_network'])
+
+    node['network']['interfaces'].each do |iface, addrs|
+      addrs['addresses'].each do |ip, params|
+        addr = IPAddr.new(ip) if params['family'].eql?('inet') || params['family'].eql?('inet6')
+        node.set['ntp']['listen'] = addr if net.include?(addr)
+      end
+    end
+  end
+end
+
 template node['ntp']['conffile'] do
   source   'ntp.conf.erb'
   owner    node['ntp']['conf_owner']
   group    node['ntp']['conf_group']
   mode     '0644'
   notifies :restart, "service[#{node['ntp']['service']}]"
+end
+
+if node['ntp']['sync_clock']
+  execute "Stop #{node['ntp']['service']} in preparation for ntpdate" do
+    command '/bin/true'
+    action :run
+    notifies :stop, "service[#{node['ntp']['service']}]", :immediately
+  end
+
+  execute 'Force sync system clock with ntp server' do
+    command 'ntpd -q'
+    action :run
+    notifies :start, "service[#{node['ntp']['service']}]"
+  end
+end
+
+if node['ntp']['sync_hw_clock'] && !platform_family?('windows')
+  execute 'Force sync hardware clock with system clock' do
+    command 'hwclock --systohc'
+    action :run
+  end
 end
 
 service node['ntp']['service'] do
