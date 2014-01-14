@@ -7,21 +7,18 @@ driver_config:
 platforms:
   - name: ubuntu-12.04
     run_list:
-    - recipe[apt]
-  - name: ubuntu-10.04
-    run_list:
-    - recipe[apt]
-  - name: centos-6.4
-  - name: centos-5.9
+    - recipe[rackspace_apt]
+  - name: debian-7
+  - name: centos-6.5
 
 suites:
   - name: default
     run_list:
-      - recipe[ntp::default]
+      - recipe[rackspace_ntp::default]
     attributes:
       ntp:
         sync_clock: true
         sync_hw_clock: true
   - name: undo
     run_list:
-      - recipe[ntp::undo]
+      - recipe[rackspace_ntp::undo]
