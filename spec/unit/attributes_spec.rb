@@ -1,12 +1,14 @@
 #
-# Cookbook Name:: ntp
+# Cookbook Name:: rackspace_ntp
 # Test:: attributes_spec
 #
 # Author:: Fletcher Nichol
 # Author:: Eric G. Wolfe
+# Author:: Christopher Coffey (<christopher.coffey@rackspace.com)
 #
 # Copyright 2012, Fletcher Nichol
 # Copyright 2012, Eric G. Wolfe
+# Copyright 2014, Rackspace, US, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -24,7 +26,7 @@
 require 'spec_helper'
 
 describe 'ntp attributes' do
-  let(:chef_run) { ChefSpec::ChefRunner.new.converge('ntp::default') }
+  let(:chef_run) { ChefSpec::ChefRunner.new.converge('rackspace_ntp::default') }
   let(:ntp) { chef_run.node['ntp'] }
 
   describe 'on an unknown platform' do
