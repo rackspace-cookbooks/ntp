@@ -57,7 +57,7 @@ describe 'ntp::default' do
       expect(cookbook_file.group).to eq('root')
     end
 
-    it 'has 0755 permissions' do
+    it 'has 0644 permissions' do
       expect(cookbook_file.mode).to eq('0644')
     end
   end
@@ -74,17 +74,150 @@ describe 'ntp::default' do
       expect(template.group).to eq('root')
     end
 
-    it 'has 0755 permissions' do
+    it 'has 0644 permissions' do
       expect(template.mode).to eq('0644')
     end
   end
 
-  it 'starts the ntp service' do
-    expect(chef_run).to start_service('ntp')
+  it 'does not execute the "Force sync system clock with ntp server" command' do
+    expect(chef_run).not_to execute_command('ntpd -q')
   end
 
-  it 'sets ntp to start on boot' do
-    expect(chef_run).to set_service_to_start_on_boot('ntp')
+  it 'does not execute the "Force sync hardware clock with system clock" command' do
+    expect(chef_run).not_to execute_command('hwclock --systohc')
+  end
+
+  it 'starts the ntpd service' do
+    expect(chef_run).to start_service('ntpd')
+  end
+
+  it 'sets ntpd to start on boot' do
+    expect(chef_run).to set_service_to_start_on_boot('ntpd')
+  end
+
+  context 'the sync_clock attribute is set' do
+    let(:chef_run) do
+      runner = ChefSpec::ChefRunner.new
+      runner.node.set['ntp']['sync_clock'] = true
+      runner.converge('ntp::default')
+    end
+
+    it 'executes the "Force sync system clock with ntp server" command' do
+      expect(chef_run).to execute_command('ntpd -q')
+    end
+  end
+
+  context 'the sync_hw_clock attribute is set on a non-Windows OS' do
+    let(:chef_run) do
+      runner = ChefSpec::ChefRunner.new
+      runner.node.set['ntp']['sync_hw_clock'] = true
+      runner.converge('ntp::default')
+    end
+
+    it 'executes the "Force sync hardware clock with system clock" command' do
+      expect(chef_run).to execute_command('hwclock --systohc')
+    end
+  end
+
+  context 'ntp["listen_network"] is set to "primary"' do
+    let(:chef_run) do
+      runner = ChefSpec::ChefRunner.new
+      runner.node.set['ntp']['listen_network'] = 'primary'
+      runner.converge('ntp::default')
+    end
+
+    it 'expect ntp["listen"] to be equal node["ipaddress"]' do
+      expect(chef_run.node['ntp']['listen']).to eq(chef_run.node['ipaddress'])
+    end
+  end
+
+  context 'ntp["listen_network"] is set to a CIDR' do
+    let(:chef_run) do
+      runner = ChefSpec::ChefRunner.new
+      runner.node.set['network']['interfaces']['eth0']['addresses']['192.168.253.254'] = {
+        'netmask' => '255.255.255.0',
+        'broadcast' => '192.168.253.255',
+        'family' => 'inet'
+      }
+      runner.node.set['ntp']['listen_network'] = '192.168.253.0/24'
+      runner.converge('ntp::default')
+    end
+
+    it 'expect ntp["listen"] to be the CIDR interface address' do
+      expect(chef_run.node['ntp']['listen']).to eq('192.168.253.254')
+    end
+  end
+
+  context 'ntp["listen"] is set to a specific address' do
+    let(:chef_run) do
+      runner = ChefSpec::ChefRunner.new
+      runner.node.set['ntp']['listen'] = '192.168.254.254'
+      runner.converge('ntp::default')
+    end
+
+    it 'expect ntp["listen"] to be the specified address' do
+      expect(chef_run.node['ntp']['listen']).to eq('192.168.254.254')
+    end
+  end
+
+  context 'ntp["listen"] and ntp["listen_network"] are both set (primary test)' do
+    let(:chef_run) do
+      runner = ChefSpec::ChefRunner.new
+      runner.node.set['network']['interfaces']['eth0']['addresses']['192.168.253.254'] = {
+        'netmask' => '255.255.255.0',
+        'broadcast' => '192.168.253.255',
+        'family' => 'inet'
+      }
+      runner.node.set['network']['interfaces']['eth1']['addresses']['192.168.254.254'] = {
+        'netmask' => '255.255.255.0',
+        'broadcast' => '192.168.254.255',
+        'family' => 'inet'
+      }
+      runner.node.set['network']['default_gateway'] = '192.168.253.1'
+      runner.node.set['ntp']['listen_network'] = 'primary'
+      runner.node.set['ntp']['listen'] = '192.168.254.254'
+      runner.converge('ntp::default')
+    end
+
+    it 'expect ntp["listen"] to be the specified address from ntp["listen"]' do
+      expect(chef_run.node['ntp']['listen']).to eq('192.168.254.254')
+    end
+  end
+
+  context 'ntp["listen"] and ntp["listen_network"] are both set (CIDR test)' do
+    let(:chef_run) do
+      runner = ChefSpec::ChefRunner.new
+      runner.node.set['network']['interfaces']['eth0']['addresses']['192.168.253.254'] = {
+        'netmask' => '255.255.255.0',
+        'broadcast' => '192.168.253.255',
+        'family' => 'inet'
+      }
+      runner.node.set['network']['interfaces']['eth1']['addresses']['192.168.254.254'] = {
+        'netmask' => '255.255.255.0',
+        'broadcast' => '192.168.254.255',
+        'family' => 'inet'
+      }
+      runner.node.set['ntp']['listen_network'] = '192.168.253.0/24'
+      runner.node.set['ntp']['listen'] = '192.168.254.254'
+      runner.converge('ntp::default')
+    end
+
+    it 'expect ntp["listen"] to be the specified address from ntp["listen"]' do
+      expect(chef_run.node['ntp']['listen']).to eq('192.168.254.254')
+    end
+  end
+
+  context 'the sync_hw_clock attribute is set on a Windows OS' do
+    let(:chef_run) do
+      runner = ChefSpec::ChefRunner.new(platform: 'windows', version: '2008R2')
+      runner.node.set['ntp']['sync_hw_clock'] = true
+      runner.converge('ntp::default')
+    end
+
+    it 'does not executes the "Force sync hardware clock with system clock" command' do
+      pending('ChefSpec does not yet understand the inherits attribute in cookbook_file resources')
+      expect(chef_run).not_to execute_command('hwclock --systohc')
+    end
   end
 
   context 'on CentOS 5' do
@@ -98,12 +231,24 @@ describe 'ntp::default' do
       expect(chef_run).to_not install_package('ntpdate')
     end
 
-    it 'starts the ntpd service' do
-      expect(chef_run).to start_service('ntpd')
-    end
-
     it 'sets ntpd to start on boot' do
       expect(chef_run).to set_service_to_start_on_boot('ntpd')
+    end
+  end
+
+  context 'ubuntu' do
+    let(:chef_run) { ChefSpec::ChefRunner.new(platform: 'ubuntu', version: '12.04').converge('ntp::default') }
+
+    it 'starts the ntp service' do
+      expect(chef_run).to start_service('ntp')
+    end
+
+    it 'sets ntp to start on boot' do
+      expect(chef_run).to set_service_to_start_on_boot('ntp')
+    end
+
+    it 'includes the apparmor recipe' do
+      expect(chef_run).to include_recipe('ntp::apparmor')
     end
   end
 
@@ -116,10 +261,6 @@ describe 'ntp::default' do
 
     it 'does not install the ntpdate package' do
       expect(chef_run).to_not install_package('ntpdate')
-    end
-
-    it 'starts the ntpd service' do
-      expect(chef_run).to start_service('ntpd')
     end
 
     it 'sets ntpd to start on boot' do
