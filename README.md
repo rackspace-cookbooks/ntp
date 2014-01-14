@@ -1,8 +1,7 @@
 NTP Cookbook
 ============
-[![Build Status](https://secure.travis-ci.org/opscode-cookbooks/ntp.png?branch=master)](http://travis-ci.org/opscode-cookbooks/ntp)
 
-Installs and configures ntp. On Windows systems it uses the Meinberg port of the standard NTPd client to Windows.
+Installs and configures ntp. 
 
 ### About Testing
 
@@ -16,101 +15,82 @@ Requirements
 ### Supported Operating Systems
 - Debian-family Linux Distributions
 - RedHat-family Linux Distributions
-- FreeBSD
-- Windows
+
 
 ### Cookbooks
-- When running on Windows based systems, the node must include the Windows cookbook. This cookbook suggests the Windows cookbook in the metadata so as to not force inclusion of the Windows cookbook on *nix systems. Change 'suggests' to 'depends' if you require Windows platform support.
+
 
 Attributes
 ----------
 ### Recommended tunables
 
-* `ntp['servers']` - (applies to NTP Servers and Clients)
+* `rackspace_ntp['servers']` - (applies to NTP Servers and Clients)
   - Array, should be a list of upstream NTP servers that will be considered authoritative by the local NTP daemon. The local NTP daemon will act as a client, adjusting local time to match time data retrieved from the upstream NTP servers.
 
   The NTP protocol works best with at least 4 servers. The ntp daemon will disregard any server after the 10th listed, but will continue monitoring all listed servers. For more information, see [Upstream Server Time Quantity](http://support.ntp.org/bin/view/Support/SelectingOffsiteNTPServers#Section_5.3.3.) at [support.ntp.org](http://support.ntp.org).
 
-* `ntp['peers']` - (applies to NTP Servers ONLY)
+* `rackspace_ntp['peers']` - (applies to NTP Servers ONLY)
   - Array, should be a list of local NTP peers. For more information, see [Designing Your NTP Network](http://support.ntp.org/bin/view/Support/DesigningYourNTPNetwork) at [support.ntp.org](http://support.ntp.org).
 
-* `ntp['restrictions']` - (applies to NTP Servers only)
+* `rackspace_ntp['restrictions']` - (applies to NTP Servers only)
   - Array, should be a list of restrict lines to define access to NTP clients on your LAN.
 
-* `ntp['sync_clock']` (applies to NTP Servers and Clients)
+* `rackspace_ntp['sync_clock']` (applies to NTP Servers and Clients)
   - Boolean. Defaults to false. Forces the ntp daemon to be halted, an ntp -q command to be issued, and the ntp daemon to be restarted again on every Chef-client run. Will have no effect if drift is over 1000 seconds.
 
-* `ntp['sync_hw_clock']` (applies to NTP Servers and Clients)
+* `rackspace_ntp['sync_hw_clock']` (applies to NTP Servers and Clients)
   - Boolean. Defaults to false. On *nix-based systems, forces the 'hwclock --systohc' command to be issued on every Chef-client run. This will sync the hardware clock to the system clock.
   - Not available on Windows.
 
-* `ntp["listen_network"]` / `ntp["listen"]`
+* `rackspace_ntp["listen_network"]` / `rackspace_ntp["listen"]`
   - String, optional attribute. Default is for NTP to listen on all addresses.
   - `ntp["listen_network"]` should be set to 'primary' to listen on the node's primary IP address as determined by ohai, or set to a CIDR (eg: '192.168.4.0/24') to listen on the last node address on that CIDR.
-  - `ntp["listen"]` can be set to a specific address (eg: '192.168.4.10') instead of `ntp["listen_network"]` to force listening on a specific address.
-  - If both `ntp["listen"]` and `ntp["listen_network"]` are set then `ntp["listen"]` will always win.
+  - `rackspace_ntp["listen"]` can be set to a specific address (eg: '192.168.4.10') instead of `rackspace_ntp["listen_network"]` to force listening on a specific address.
+  - If both `rackspace_ntp["listen"]` and `rackspace_ntp["listen_network"]` are set then `rackspace_ntp["listen"]` will always win.
 
 ### Platform specific
 
-* `ntp['packages']`
+* `rackspace_ntp['packages']`
   - Array, the packages to install
-  - Default, ntp for everything, ntpdate depending on platform. Not applicable for
-    Windows nodes
+  - Default, ntp for everything, ntpdate depending on platform. 
 
-* `ntp['service']`
+* `rackspace_ntp['service']`
   - String, the service to act on
   - Default, ntp, NTP, or ntpd, depending on platform
 
-* `ntp['varlibdir']`
+* `rackspace_ntp['varlibdir']`
   - String, the path to /var/lib files such as the driftfile.
-  - Default, platform-specific location. Not applicable for Windows nodes
+  - Default, platform-specific location. 
 
-* `ntp['driftfile']`
+* `rackspace_ntp['driftfile']`
   - String, the path to the frequency file.
   - Default, platform-specific location.
 
-* `ntp['conffile']`
+* `rackspace_ntp['conffile']`
   - String, the path to the ntp configuration file.
   - Default, platform-specific location.
 
-* `ntp['statsdir']`
+* `rackspace_ntp['statsdir']`
   - String, the directory path for files created by the statistics facility.
-  - Default, platform-specific location. Not applicable for Windows nodes
+  - Default, platform-specific location. 
 
-* `ntp['conf_owner'] and ntp['conf_group']`
+* `rackspace_ntp['conf_owner'] and rackspace_ntp['conf_group']`
   - String, the owner and group of the sysconf directory files, such as /etc/ntp.conf.
   - Default, platform-specific root:root or root:wheel.
 
-* `ntp['var_owner'] and ntp['var_group']`
+* `rackspace_ntp['var_owner'] and rackspace_ntp['var_group']`
   - String, the owner and group of the /var/lib directory files, such as /var/lib/ntp.
-  - Default, platform-specific ntp:ntp or root:wheel. Not applicable for Windows nodes
+  - Default, platform-specific ntp:ntp or root:wheel. 
 
-* `ntp['leapfile']`
+* `rackspace_ntp['leapfile']`
   - String, the path to the ntp leapfile.
   - Default, /etc/ntp.leapseconds.
 
-* `ntp['package_url']`
-  - String, the URL to the the Meinberg NTPd client installation package.
-  - Default, Meinberg site download URL
-  - Windows platform only
-
-* `ntp['vs_runtime_url']`
-  - String, the URL to the the Visual Studio C++ 2008 runtime libraries that are required
-    for the Meinberg NTP client.
-  - Default, Microsoft site download URL
-  - Windows platform only
-
-* `ntp['vs_runtime_productname']`
-  - String, the installation name of the Visual Studio C++ Runtimes file.
-  - Default, "Microsoft Visual C++ 2008 Redistributable - x86 9.0.21022"
-  - Windows platform only
-
-* ntp['sync_hw_clock']
+* rackspace_ntp['sync_hw_clock']
   - Boolean, determines if the ntpdate command is issued to sync the hardware clock
   - Default, false
-  - Not applicable for Windows nodes
 
-* `ntp['apparmor_enabled']`
+* `rackspace_ntp['apparmor_enabled']`
   - Boolean, enables configuration of apparmor if set to true
   - Defaults to false and will make no provisions for apparmor.  If a
     platform is apparmor enabled by default, (currently Ubuntu)
@@ -154,9 +134,6 @@ The timeX.int.example.org used in these roles should be the names or IP addresse
 
 If for some reason you need to stop and remove the ntp daemon, you can apply this recipe by adding `ntp::undo` to your run_list. The undo recipe is not supported on Windows at the moment.
 
-### windows_client recipe
-
-Windows only. Apply on a Windows host to install the Meinberg NTPd client. 
 
 
 Development
@@ -193,6 +170,7 @@ This section details "quick development" steps. For a detailed explanation, see 
 License & Authors
 -----------------
 - Author:: Joshua Timberman (<joshua@opscode.com>)
+- Author:: Christopher Coffey (<christopher.coffey@rackspace.com>)
 - Contributor:: Eric G. Wolfe (<wolfe21@marshall.edu>)
 - Contributor:: Fletcher Nichol (<fletcher@nichol.ca>)
 - Contributor:: Tim Smith (<tsmith@limelight.com>)
@@ -207,6 +185,7 @@ Copyright 2012, Webtrends, Inc.
 Copyright 2013, Limelight Networks, Inc.
 Copyright 2013, Brad Knowles
 Copyright 2013, Brad Beam
+Copyright 2014, Rackspace, US, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
