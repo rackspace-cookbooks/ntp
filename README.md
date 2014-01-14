@@ -107,7 +107,7 @@ Set up the ntp attributes in a role. For example in a base.rb role applied to al
 name 'base'
 description 'Role applied to all systems'
 default_attributes(
-  'ntp' => {
+  'rackspace_ntp' => {
     'servers' => ['time0.int.example.org', 'time1.int.example.org']
   }
 )
@@ -119,7 +119,7 @@ Then in an ntpserver.rb role that is applied to NTP servers (e.g., time.int.exam
 name 'ntp_server'
 description 'Role applied to the system that should be an NTP server.'
 default_attributes(
-  'ntp' => {
+  'rackspace_ntp' => {
     'is_server'    => 'true',
     'servers'      => ['0.pool.ntp.org', '1.pool.ntp.org'],
     'peers'        => ['time0.int.example.org', 'time1.int.example.org'],
@@ -142,7 +142,7 @@ This section details "quick development" steps. For a detailed explanation, see 
 
 1. Clone this repository from GitHub:
 
-        $ git clone git@github.com:opscode-cookbooks/ntp.git
+        $ git clone git@github.com:rackspace-cookbooks/rackspace_ntp.git
 
 2. Create a git branch
 
