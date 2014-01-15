@@ -24,7 +24,7 @@ node[:rackspace_ntp][:packages].each do |ntppkg|
   package ntppkg
 end
 
-[node[:rackspace_ntp][:varlibdir], node[:rackspace_ntp][:statsdir]].each do |ntpdir|
+[node[:rackspace_ntp][:varlibdir], node[:rackspace_ntp][:config][:statsdir]].each do |ntpdir|
   directory ntpdir do
     owner node[:rackspace_ntp][:var_owner]
     group node[:rackspace_ntp][:var_group]
@@ -32,17 +32,17 @@ end
   end
 end
 
-cookbook_file node[:rackspace_ntp][:leapfile] do
+cookbook_file node[:rackspace_ntp][:config][:leapfile] do
   owner node[:rackspace_ntp][:conf_owner]
   group node[:rackspace_ntp][:conf_group]
   mode  '0644'
 end
 
-include_recipe [:rackspace_ntp::apparmor] if node[:rackspace_ntp][:apparmor_enabled]
+include_recipe "rackspace_ntp::apparmor" if node[:rackspace_ntp][:apparmor_enabled]
 
 
-unless node[:rackspace_ntp][:servers].size > 0
-  node.default[:rackspace_ntp][:servers] = [
+unless node[:rackspace_ntp][:config][:servers].size > 0
+  node.default[:rackspace_ntp][:config][:servers] = [
     '0.pool.ntp.org',
     '1.pool.ntp.org',
     '2.pool.ntp.org',
