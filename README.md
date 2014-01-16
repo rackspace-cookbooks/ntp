@@ -24,7 +24,7 @@ Attributes
 ----------
 ### Recommended tunables
 
-* `['servers']` - (applies to NTP Servers and Clients)
+* `[:servers]` - (applies to NTP Servers and Clients)
   - Array, should be a list of upstream NTP servers that will be considered authoritative by the local NTP daemon. The local NTP daemon will act as a client, adjusting local time to match time data retrieved from the upstream NTP servers.
 
   The NTP protocol works best with at least 4 servers. The ntp daemon will disregard any server after the 10th listed, but will continue monitoring all listed servers. For more information, see [Upstream Server Time Quantity](http://support.ntp.org/bin/view/Support/SelectingOffsiteNTPServers#Section_5.3.3.) at [support.ntp.org](http://support.ntp.org).
@@ -42,11 +42,11 @@ Attributes
   - Boolean. Defaults to false. On *nix-based systems, forces the 'hwclock --systohc' command to be issued on every Chef-client run. This will sync the hardware clock to the system clock.
   - Not available on Windows.
 
-* `[:listen_network]` / `rackspace_ntp["listen"]`
+* `[:listen_network]` / `[:listen]`
   - String, optional attribute. Default is for NTP to listen on all addresses.
-  - `ntp["listen_network"]` should be set to 'primary' to listen on the node's primary IP address as determined by ohai, or set to a CIDR (eg: '192.168.4.0/24') to listen on the last node address on that CIDR.
-  - `[:listen]` can be set to a specific address (eg: '192.168.4.10') instead of `rackspace_ntp["listen_network"]` to force listening on a specific address.
-  - If both `rackspace_ntp["listen"]` and `rackspace_ntp["listen_network"]` are set then `rackspace_ntp["listen"]` will always win.
+  - `[:listen_network]` should be set to 'primary' to listen on the node's primary IP address as determined by ohai, or set to a CIDR (eg: '192.168.4.0/24') to listen on the last node address on that CIDR.
+  - `[:listen]` can be set to a specific address (eg: '192.168.4.10') instead of `[:listen_network]` to force listening on a specific address.
+  - If both `[:listen]` and `[:listen_network]` are set then `[:listen]` will always win.
 
 ### Platform specific
 
