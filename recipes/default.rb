@@ -68,6 +68,7 @@ if node[:rackspace_ntp][:config][:listen].nil? && !node[:rackspace_ntp][:listen_
 end
 
 template node[:rackspace_ntp][:conffile] do
+  cookbook node[:rackspace_ntp][:templates_cookbook] 
   source   'ntp.conf.erb'
   owner    node[:rackspace_ntp][:config][:conf_owner]
   group    node[:rackspace_ntp][:config][:conf_group]

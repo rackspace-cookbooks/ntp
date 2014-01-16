@@ -28,6 +28,8 @@ default[:rackspace_ntp][:config][:servers] = []
 default[:rackspace_ntp][:config][:peers] = []
 default[:rackspace_ntp][:config][:restrictions] = []
 
+default[:rackspace_ntp][:templates_cookbook] = 'rackspace_ntp'
+
 # internal attributes
 default[:rackspace_ntp][:packages] = %w(ntp ntpdate)
 default[:rackspace_ntp][:service] = 'ntpd'
