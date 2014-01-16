@@ -1,4 +1,4 @@
-NTP Cookbook
+Rackspace_NTP Cookbook
 ============
 
 Installs and configures ntp. 
