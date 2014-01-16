@@ -18,79 +18,79 @@ Requirements
 
 
 ### Cookbooks
-
+- rackspace_ntp::default.rb 
 
 Attributes
 ----------
 ### Recommended tunables
 
-* `rackspace_ntp['servers']` - (applies to NTP Servers and Clients)
+* `['servers']` - (applies to NTP Servers and Clients)
   - Array, should be a list of upstream NTP servers that will be considered authoritative by the local NTP daemon. The local NTP daemon will act as a client, adjusting local time to match time data retrieved from the upstream NTP servers.
 
   The NTP protocol works best with at least 4 servers. The ntp daemon will disregard any server after the 10th listed, but will continue monitoring all listed servers. For more information, see [Upstream Server Time Quantity](http://support.ntp.org/bin/view/Support/SelectingOffsiteNTPServers#Section_5.3.3.) at [support.ntp.org](http://support.ntp.org).
 
-* `rackspace_ntp['peers']` - (applies to NTP Servers ONLY)
+* `[:peers]` - (applies to NTP Servers ONLY)
   - Array, should be a list of local NTP peers. For more information, see [Designing Your NTP Network](http://support.ntp.org/bin/view/Support/DesigningYourNTPNetwork) at [support.ntp.org](http://support.ntp.org).
 
-* `rackspace_ntp['restrictions']` - (applies to NTP Servers only)
+* `[:restrictions]` - (applies to NTP Servers only)
   - Array, should be a list of restrict lines to define access to NTP clients on your LAN.
 
-* `rackspace_ntp['sync_clock']` (applies to NTP Servers and Clients)
+* `[:sync_clock]` (applies to NTP Servers and Clients)
   - Boolean. Defaults to false. Forces the ntp daemon to be halted, an ntp -q command to be issued, and the ntp daemon to be restarted again on every Chef-client run. Will have no effect if drift is over 1000 seconds.
 
-* `rackspace_ntp['sync_hw_clock']` (applies to NTP Servers and Clients)
+* `[:sync_hw_clock]` (applies to NTP Servers and Clients)
   - Boolean. Defaults to false. On *nix-based systems, forces the 'hwclock --systohc' command to be issued on every Chef-client run. This will sync the hardware clock to the system clock.
   - Not available on Windows.
 
-* `rackspace_ntp["listen_network"]` / `rackspace_ntp["listen"]`
+* `[:listen_network]` / `rackspace_ntp["listen"]`
   - String, optional attribute. Default is for NTP to listen on all addresses.
   - `ntp["listen_network"]` should be set to 'primary' to listen on the node's primary IP address as determined by ohai, or set to a CIDR (eg: '192.168.4.0/24') to listen on the last node address on that CIDR.
-  - `rackspace_ntp["listen"]` can be set to a specific address (eg: '192.168.4.10') instead of `rackspace_ntp["listen_network"]` to force listening on a specific address.
+  - `[:listen]` can be set to a specific address (eg: '192.168.4.10') instead of `rackspace_ntp["listen_network"]` to force listening on a specific address.
   - If both `rackspace_ntp["listen"]` and `rackspace_ntp["listen_network"]` are set then `rackspace_ntp["listen"]` will always win.
 
 ### Platform specific
 
-* `rackspace_ntp['packages']`
+* `[:packages]`
   - Array, the packages to install
   - Default, ntp for everything, ntpdate depending on platform. 
 
-* `rackspace_ntp['service']`
+* `[:service]`
   - String, the service to act on
   - Default, ntp, NTP, or ntpd, depending on platform
 
-* `rackspace_ntp['varlibdir']`
+* `[:varlibdir]`
   - String, the path to /var/lib files such as the driftfile.
   - Default, platform-specific location. 
 
-* `rackspace_ntp['driftfile']`
+* `[:driftfile]`
   - String, the path to the frequency file.
   - Default, platform-specific location.
 
-* `rackspace_ntp['conffile']`
+* `[:conffile]`
   - String, the path to the ntp configuration file.
   - Default, platform-specific location.
 
-* `rackspace_ntp['statsdir']`
+* `[:statsdir]`
   - String, the directory path for files created by the statistics facility.
   - Default, platform-specific location. 
 
-* `rackspace_ntp['conf_owner'] and rackspace_ntp['conf_group']`
+* `[:conf_owner] and rackspace_ntp['conf_group']`
   - String, the owner and group of the sysconf directory files, such as /etc/ntp.conf.
   - Default, platform-specific root:root or root:wheel.
 
-* `rackspace_ntp['var_owner'] and rackspace_ntp['var_group']`
+* `[:var_owner] and rackspace_ntp['var_group']`
   - String, the owner and group of the /var/lib directory files, such as /var/lib/ntp.
   - Default, platform-specific ntp:ntp or root:wheel. 
 
-* `rackspace_ntp['leapfile']`
+* `[:leapfile]`
   - String, the path to the ntp leapfile.
   - Default, /etc/ntp.leapseconds.
 
-* rackspace_ntp['sync_hw_clock']
+* `[:sync_hw_clock]`
   - Boolean, determines if the ntpdate command is issued to sync the hardware clock
   - Default, false
 
-* `rackspace_ntp['apparmor_enabled']`
+* `[:apparmor_enabled]`
   - Boolean, enables configuration of apparmor if set to true
   - Defaults to false and will make no provisions for apparmor.  If a
     platform is apparmor enabled by default, (currently Ubuntu)
