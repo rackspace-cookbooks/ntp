@@ -24,7 +24,7 @@
 #
 
 # default attributes for all platforms
-default[:rackspace_ntp][:config][:servers] = [] 
+default[:rackspace_ntp][:config][:servers] = []
 default[:rackspace_ntp][:config][:peers] = []
 default[:rackspace_ntp][:config][:restrictions] = []
 
@@ -48,7 +48,6 @@ default[:rackspace_ntp][:config][:driftfile] = "#{node[:rackspace_ntp][:varlibdi
 default[:rackspace_ntp][:config][:statsdir] = '/var/log/ntpstats/'
 default[:rackspace_ntp][:config][:leapfile] = '/etc/ntp.leapseconds'
 default[:rackspace_ntp][:config][:listen] = nil
-
 
 # overrides on a platform-by-platform basis
 case node[:platform_family]

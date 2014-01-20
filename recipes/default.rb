@@ -38,8 +38,7 @@ cookbook_file node[:rackspace_ntp][:config][:leapfile] do
   mode  '0644'
 end
 
-include_recipe "rackspace_ntp::apparmor" if node[:rackspace_ntp][:apparmor_enabled]
-
+include_recipe 'rackspace_ntp::apparmor' if node[:rackspace_ntp][:apparmor_enabled]
 
 unless node[:rackspace_ntp][:config][:servers].size > 0
   node.default[:rackspace_ntp][:config][:servers] = [
@@ -68,7 +67,7 @@ if node[:rackspace_ntp][:config][:listen].nil? && !node[:rackspace_ntp][:listen_
 end
 
 template node[:rackspace_ntp][:conffile] do
-  cookbook node[:rackspace_ntp][:templates_cookbook][:ntp_conf] 
+  cookbook node[:rackspace_ntp][:templates_cookbook][:ntp_conf]
   source   'ntp.conf.erb'
   owner    node[:rackspace_ntp][:config][:conf_owner]
   group    node[:rackspace_ntp][:config][:conf_group]
@@ -90,11 +89,10 @@ if node[:rackspace_ntp][:sync_clock]
   end
 end
 
-if node[:rackspace_ntp][:sync_hw_clock] && !platform_family?('windows')
-  execute 'Force sync hardware clock with system clock' do
-    command 'hwclock --systohc'
-    action :run
-  end
+execute 'Force sync hardware clock with system clock' do
+  command 'hwclock --systohc'
+  action :run
+  only_if { node[:rackspace_ntp][:sync_hw_clock] }
 end
 
 service node[:rackspace_ntp][:service] do

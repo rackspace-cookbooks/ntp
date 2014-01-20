@@ -7,5 +7,3 @@ long_description  IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 version           '2.0.0'
 
 recipe 'rackspace_ntp', 'Installs and configures ntp either as a server or client'
-
-
