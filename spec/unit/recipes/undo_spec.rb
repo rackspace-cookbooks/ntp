@@ -1,14 +1,14 @@
 require 'spec_helper'
 
-describe 'ntp::undo' do
-  let(:chef_run) { ChefSpec::ChefRunner.new.converge('ntp::undo') }
+describe 'rackspace_ntp::undo' do
+  let(:chef_run) { ChefSpec::Runner.new.converge('rackspace_ntp::undo') }
 
   it 'stops the ntpd service' do
     expect(chef_run).to stop_service('ntpd')
   end
 
   it 'sets the ntpd service not to start on boot' do
-    expect(chef_run).to set_service_to_not_start_on_boot('ntpd')
+    expect(chef_run).not_to enable_service('ntpd')
   end
 
   it 'uninstalls the ntp package' do
