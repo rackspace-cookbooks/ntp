@@ -31,7 +31,7 @@ node[:rackspace_ntp][:packages].each do |ntppkg|
   end
 end
 
-ruby_block 'remove ntp::undo from run list' do
+ruby_block 'remove rackspace_ntp::undo from run list' do
   block do
     node.run_list.remove('recipe[rackspace_ntp::undo]')
   end
