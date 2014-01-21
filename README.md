@@ -5,7 +5,7 @@ Installs and configures ntp.
 
 ### About Testing
 
-In addition to providing interfaces to the ntp time service, this recipe is also designed to provide a simple community cookbook with broad cross-platform support to serve as a testing documentation reference. This cookbook utilizes [Foodcritic](http://acrmp.github.io/foodcritic/), [Test-Kitchen](https://github.com/opscode/test-kitchen), [Vagrant](http://www.vagrantup.com), [Chefspec](http://acrmp.github.io/chefspec/), [bats](https://github.com/sstephenson/bats), [Rubocop](https://github.com/bbatsov/rubocop), and [Travis-CI](https://travis-ci.org) to provide a comprehensive suite of automated test coverage.
+In addition to providing interfaces to the ntp time service, this recipe is also designed to provide a simple community cookbook with broad cross-platform support to serve as a testing documentation reference. This cookbook utilizes [Foodcritic](http://acrmp.github.io/foodcritic/), [Test-Kitchen](https://github.com/opscode/test-kitchen), [Vagrant](http://www.vagrantup.com), [Chefspec](http://acrmp.github.io/chefspec/), [bats](https://github.com/sstephenson/bats), [Rubocop](https://github.com/bbatsov/rubocop).
 
 More information on the testing strategy used in this cookbook is available in the TESTING.md file, along with information on how to use this type of testing in your own cookbooks.
 
@@ -24,73 +24,73 @@ Attributes
 ----------
 ### Recommended tunables
 
-* `[:servers]` - (applies to NTP Servers and Clients)
+* `['servers']` - (applies to NTP Servers and Clients)
   - Array, should be a list of upstream NTP servers that will be considered authoritative by the local NTP daemon. The local NTP daemon will act as a client, adjusting local time to match time data retrieved from the upstream NTP servers.
 
   The NTP protocol works best with at least 4 servers. The ntp daemon will disregard any server after the 10th listed, but will continue monitoring all listed servers. For more information, see [Upstream Server Time Quantity](http://support.ntp.org/bin/view/Support/SelectingOffsiteNTPServers#Section_5.3.3.) at [support.ntp.org](http://support.ntp.org).
 
-* `[:peers]` - (applies to NTP Servers ONLY)
+* `['peers']` - (applies to NTP Servers ONLY)
   - Array, should be a list of local NTP peers. For more information, see [Designing Your NTP Network](http://support.ntp.org/bin/view/Support/DesigningYourNTPNetwork) at [support.ntp.org](http://support.ntp.org).
 
-* `[:restrictions]` - (applies to NTP Servers only)
+* `['restrictions']` - (applies to NTP Servers only)
   - Array, should be a list of restrict lines to define access to NTP clients on your LAN.
 
-* `[:sync_clock]` (applies to NTP Servers and Clients)
+* `['sync_clock']` (applies to NTP Servers and Clients)
   - Boolean. Defaults to false. Forces the ntp daemon to be halted, an ntp -q command to be issued, and the ntp daemon to be restarted again on every Chef-client run. Will have no effect if drift is over 1000 seconds.
 
-* `[:sync_hw_clock]` (applies to NTP Servers and Clients)
+* `['sync_hw_clock']` (applies to NTP Servers and Clients)
   - Boolean. Defaults to false. On *nix-based systems, forces the 'hwclock --systohc' command to be issued on every Chef-client run. This will sync the hardware clock to the system clock.
   - Not available on Windows.
 
-* `[:listen_network]` / `[:listen]`
+* `['listen_network']` / `['listen']`
   - String, optional attribute. Default is for NTP to listen on all addresses.
-  - `[:listen_network]` should be set to 'primary' to listen on the node's primary IP address as determined by ohai, or set to a CIDR (eg: '192.168.4.0/24') to listen on the last node address on that CIDR.
-  - `[:listen]` can be set to a specific address (eg: '192.168.4.10') instead of `[:listen_network]` to force listening on a specific address.
-  - If both `[:listen]` and `[:listen_network]` are set then `[:listen]` will always win.
+  - `['listen_network']` should be set to 'primary' to listen on the node's primary IP address as determined by ohai, or set to a CIDR (eg: '192.168.4.0/24') to listen on the last node address on that CIDR.
+  - `['listen']` can be set to a specific address (eg: '192.168.4.10') instead of `[:listen_network]` to force listening on a specific address.
+  - If both `['listen']` and `['listen_network']` are set then `['listen']` will always win.
 
 ### Platform specific
 
-* `[:packages]`
+* `['packages']`
   - Array, the packages to install
   - Default, ntp for everything, ntpdate depending on platform. 
 
-* `[:service]`
+* `['service']`
   - String, the service to act on
   - Default, ntp, NTP, or ntpd, depending on platform
 
-* `[:varlibdir]`
+* `['varlibdir']`
   - String, the path to /var/lib files such as the driftfile.
   - Default, platform-specific location. 
 
-* `[:driftfile]`
+* `['driftfile']`
   - String, the path to the frequency file.
   - Default, platform-specific location.
 
-* `[:conffile]`
+* `['conffile']`
   - String, the path to the ntp configuration file.
   - Default, platform-specific location.
 
-* `[:statsdir]`
+* `['statsdir']`
   - String, the directory path for files created by the statistics facility.
   - Default, platform-specific location. 
 
-* `[:conf_owner] and rackspace_ntp['conf_group']`
+* `['conf_owner'] and rackspace_ntp['conf_group']`
   - String, the owner and group of the sysconf directory files, such as /etc/ntp.conf.
   - Default, platform-specific root:root or root:wheel.
 
-* `[:var_owner] and rackspace_ntp['var_group']`
+* `['var_owner'] and ['var_group']`
   - String, the owner and group of the /var/lib directory files, such as /var/lib/ntp.
   - Default, platform-specific ntp:ntp or root:wheel. 
 
-* `[:leapfile]`
+* `['leapfile']`
   - String, the path to the ntp leapfile.
   - Default, /etc/ntp.leapseconds.
 
-* `[:sync_hw_clock]`
+* `['sync_hw_clock']`
   - Boolean, determines if the ntpdate command is issued to sync the hardware clock
   - Default, false
 
-* `[:apparmor_enabled]`
+* `['apparmor_enabled']`
   - Boolean, enables configuration of apparmor if set to true
   - Defaults to false and will make no provisions for apparmor.  If a
     platform is apparmor enabled by default, (currently Ubuntu)
