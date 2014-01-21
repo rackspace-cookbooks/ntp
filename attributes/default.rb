@@ -24,36 +24,36 @@
 #
 
 # default attributes for all platforms
-default[:rackspace_ntp][:config][:servers] = []
-default[:rackspace_ntp][:config][:peers] = []
-default[:rackspace_ntp][:config][:restrictions] = []
+default['rackspace_ntp']['config']['servers'] = []
+default['rackspace_ntp']['config']['peers'] = []
+default['rackspace_ntp']['config']['restrictions'] = []
 
-default[:rackspace_ntp][:templates_cookbook][:ntp_conf] = 'rackspace_ntp'
+default['rackspace_ntp']['templates_cookbook']['ntp_conf'] = 'rackspace_ntp'
 
 # internal attributes
-default[:rackspace_ntp][:packages] = %w(ntp ntpdate)
-default[:rackspace_ntp][:service] = 'ntpd'
-default[:rackspace_ntp][:varlibdir] = '/var/lib/ntp'
-default[:rackspace_ntp][:conffile] = '/etc/ntp.conf'
-default[:rackspace_ntp][:conf_owner] = 'root'
-default[:rackspace_ntp][:conf_group] = 'root'
-default[:rackspace_ntp][:var_owner] = 'ntp'
-default[:rackspace_ntp][:var_group] = 'ntp'
-default[:rackspace_ntp][:sync_clock] = false
-default[:rackspace_ntp][:sync_hw_clock] = false
-default[:rackspace_ntp][:listen_network] = nil
-default[:rackspace_ntp][:apparmor_enabled] = false
+default['rackspace_ntp']['packages'] = %w(ntp ntpdate)
+default['rackspace_ntp']['service'] = 'ntpd'
+default['rackspace_ntp']['varlibdir'] = '/var/lib/ntp'
+default['rackspace_ntp']['conffile'] = '/etc/ntp.conf'
+default['rackspace_ntp']['conf_owner'] = 'root'
+default['rackspace_ntp']['conf_group'] = 'root'
+default['rackspace_ntp']['var_owner'] = 'ntp'
+default['rackspace_ntp']['var_group'] = 'ntp'
+default['rackspace_ntp']['sync_clock'] = false
+default['rackspace_ntp']['sync_hw_clock'] = false
+default['rackspace_ntp']['listen_network'] = nil
+default['rackspace_ntp']['apparmor_enabled'] = false
 
-default[:rackspace_ntp][:config][:driftfile] = "#{node[:rackspace_ntp][:varlibdir]}/ntp.drift"
-default[:rackspace_ntp][:config][:statsdir] = '/var/log/ntpstats/'
-default[:rackspace_ntp][:config][:leapfile] = '/etc/ntp.leapseconds'
-default[:rackspace_ntp][:config][:listen] = nil
+default['rackspace_ntp']['config']['driftfile'] = "#{node['rackspace_ntp']['varlibdir']}/ntp.drift"
+default['rackspace_ntp']['config']['statsdir'] = '/var/log/ntpstats/'
+default['rackspace_ntp']['config']['leapfile'] = '/etc/ntp.leapseconds'
+default['rackspace_ntp']['config']['listen'] = nil
 
 # overrides on a platform-by-platform basis
-case node[:platform_family]
+case node['platform_family']
 when 'debian'
-  default[:rackspace_ntp][:service] = 'ntp'
-  default[:rackspace_ntp][:apparmor_enabled] = true if node[:platform] == 'ubuntu' && node[:platform_version].to_f >= 8.04
+  default['rackspace_ntp']['service'] = 'ntp'
+  default['rackspace_ntp']['apparmor_enabled'] = true if node['platform'] == 'ubuntu' && node['platform_version'].to_f >= 8.04
 when 'rhel'
-  default[:rackspace_ntp][:packages] = %w(ntp) if node[:platform_version].to_i < 6
+  default['rackspace_ntp']['packages'] = %w(ntp) if node['platform_version'].to_i < 6
 end

@@ -20,12 +20,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-service node[:rackspace_ntp][:service] do
+service node['rackspace_ntp']['service'] do
   supports :status => true, :restart => true
-  action   [:stop, :disable]
+  action   [:disable]
 end
 
-node[:rackspace_ntp][:packages].each do |ntppkg|
+node['rackspace_ntp']['packages'].each do |ntppkg|
   package ntppkg do
     action :remove
   end

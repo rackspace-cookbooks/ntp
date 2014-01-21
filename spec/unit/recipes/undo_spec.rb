@@ -4,7 +4,7 @@ describe 'rackspace_ntp::undo' do
   let(:chef_run) { ChefSpec::Runner.new.converge('rackspace_ntp::undo') }
 
   it 'stops the ntpd service' do
-    expect(chef_run).to stop_service('ntpd')
+    expect(chef_run).to disable_service('ntpd')
   end
 
   it 'sets the ntpd service not to start on boot' do
