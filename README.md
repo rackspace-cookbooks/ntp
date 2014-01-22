@@ -132,7 +132,7 @@ The timeX.int.example.org used in these roles should be the names or IP addresse
 
 ### undo recipe
 
-If for some reason you need to stop and remove the ntp daemon, you can apply this recipe by adding `ntp::undo` to your run_list. The undo recipe is not supported on Windows at the moment.
+If for some reason you need to stop and remove the ntp daemon, you can apply this recipe by adding `rackspace_ntp::undo` to your run_list. The undo recipe is not supported on Windows at the moment.
 
 
 
