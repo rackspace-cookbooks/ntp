@@ -21,7 +21,7 @@
 # limitations under the License.
 
 service node['rackspace_ntp']['service'] do
-  supports :status => true, :restart => true
+  supports status: true, restart: true
   action   [:disable]
 end
 

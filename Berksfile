@@ -1,6 +1,7 @@
 metadata
 
 group :integration do
-  cookbook 'rackspace_apt', '~> 2.0' git: 'git://github.com/rackspace-cookbooks/rackspace_apt.git'
-  cookbook 'minitest-handler', '~> 0.2'
+  cookbook 'rackspace_apt', git: 'git://github.com/rackspace-cookbooks/apt.git', branch: "rackspace-rebuild"
+# removing minitests for now
+#  cookbook 'minitest-handler', '~> 0.2'
 end

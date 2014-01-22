@@ -96,6 +96,6 @@ execute 'Force sync hardware clock with system clock' do
 end
 
 service node['rackspace_ntp']['service'] do
-  supports :status => true, :restart => true
+  supports status: true, restart: true
   action   [:enable, :start]
 end
