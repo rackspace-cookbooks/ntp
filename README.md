@@ -128,7 +128,7 @@ default_attributes(
 )
 ```
 
-The timeX.int.example.org used in these roles should be the names or IP addresses of internal NTP servers. Then simply add ntp, or `ntp::default` to your run_list to apply the ntp daemon's configuration.
+The timeX.int.example.org used in these roles should be the names or IP addresses of internal NTP servers. Then simply add ntp, or `rackspace_ntp::default` to your run_list to apply the ntp daemon's configuration.
 
 ### undo recipe
 
