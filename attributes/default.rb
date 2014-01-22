@@ -53,7 +53,7 @@ default['rackspace_ntp']['config']['listen'] = nil
 case node['platform_family']
 when 'debian'
   default['rackspace_ntp']['service'] = 'ntp'
-  default['rackspace_ntp']['apparmor_enabled'] = true if node['platform'] == 'ubuntu' && node['platform_version'].to_f >= 8.04
+  default['rackspace_ntp']['apparmor_enabled'] = true if node['platform'] == 'ubuntu'
 when 'rhel'
   default['rackspace_ntp']['packages'] = %w(ntp) if node['platform_version'].to_i < 6
 end
