@@ -3,13 +3,6 @@ Rackspace_NTP Cookbook
 
 Installs and configures ntp. 
 
-### About Testing
-
-In addition to providing interfaces to the ntp time service, this recipe is also designed to provide a simple community cookbook with broad cross-platform support to serve as a testing documentation reference. This cookbook utilizes [Foodcritic](http://acrmp.github.io/foodcritic/), [Test-Kitchen](https://github.com/opscode/test-kitchen), [Vagrant](http://www.vagrantup.com), [Chefspec](http://acrmp.github.io/chefspec/), [bats](https://github.com/sstephenson/bats), [Rubocop](https://github.com/bbatsov/rubocop).
-
-More information on the testing strategy used in this cookbook is available in the TESTING.md file, along with information on how to use this type of testing in your own cookbooks.
-
-
 Requirements
 ------------
 ### Supported Operating Systems
@@ -134,37 +127,13 @@ The timeX.int.example.org used in these roles should be the names or IP addresse
 
 If for some reason you need to stop and remove the ntp daemon, you can apply this recipe by adding `rackspace_ntp::undo` to your run_list. The undo recipe is not supported on Windows at the moment.
 
+TESTING
+-------
+* See testing guidelines [here](https://github.com/rackspace-cookbooks/contributing/blob/master/CONTRIBUTING.md)
 
-
-Development
------------
-This section details "quick development" steps. For a detailed explanation, see [[Contributing.md]].
-
-1. Clone this repository from GitHub:
-
-        $ git clone git@github.com:rackspace-cookbooks/rackspace_ntp.git
-
-2. Create a git branch
-
-        $ git checkout -b my_bug_fix
-
-3. Install dependencies:
-
-        $ bundle install
-
-4. **Write tests**
-5. Make your changes/patches/fixes, committing appropriately
-6. Run the tests:
-    - `bundle exec foodcritic -f any .`
-    - `bundle exec rspec`
-    - `bundle exec rubocop`
-    - `bundle exec kitchen test`
-
-  In detail:
-    - Foodcritic will catch any Chef-specific style errors
-    - RSpec will run the unit tests
-    - Rubocop will check for Ruby-specific style errors
-    - Test Kitchen will run and converge the recipes
+CONTRIBUTING
+------------
+* See guidelines [here](https://github.com/rackspace-cookbooks/contributing/blob/master/CONTRIBUTING.md)
 
 
 License & Authors

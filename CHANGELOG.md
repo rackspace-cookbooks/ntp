@@ -4,8 +4,8 @@ This file is used to list changes made in each version of the ntp cookbook.
 
 v2.0.0 (2014-1-20)
 -------------------
-Rewrote complete cookbook to meet Rackspace standards. Set attribute guidelines and refactored 
-cookbook to match.
+* Rewrote complete cookbook to meet Rackspace standards. Set attribute guidelines and refactored cookbook to match.
+* removed support for older versions of ubuntu
 
 v1.5.4 (2013-12-29)
 -------------------
