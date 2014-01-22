@@ -1,7 +1,6 @@
 metadata
 
 group :integration do
-  cookbook 'apt', '~> 2.0'
-  cookbook 'yum',  '~> 2.0'
+  cookbook 'rackspace_apt', '~> 2.0' git: 'git://github.com/rackspace-cookbooks/rackspace_apt.git'
   cookbook 'minitest-handler', '~> 0.2'
 end
