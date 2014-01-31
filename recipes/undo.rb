@@ -1,10 +1,12 @@
 #
-# Cookbook Name:: ntp
+# Cookbook Name:: rackspace_ntp
 # Recipe:: undo
 # Author:: Eric G. Wolfe
+# Author:: Christopher Coffey (<christopher.coffey@rackspace.com>)
 #
 # Copyright 2012, Eric G. Wolfe
 # Copyright 2009-2013, Opscode, Inc
+# Copyright 2014, Rackspace, US, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,23 +20,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Do not continue if trying to run this recipe on Windows
-return 'The ntp::undo recipe does not support Windows' if platform_family?('windows')
-
-service node['ntp']['service'] do
-  supports :status => true, :restart => true
-  action   [:stop, :disable]
+service node['rackspace_ntp']['service'] do
+  supports status: true, restart: true
+  action   [:disable]
 end
 
-node['ntp']['packages'].each do |ntppkg|
+node['rackspace_ntp']['packages'].each do |ntppkg|
   package ntppkg do
     action :remove
   end
 end
 
-ruby_block 'remove ntp::undo from run list' do
+ruby_block 'remove rackspace_ntp::undo from run list' do
   block do
-    node.run_list.remove('recipe[ntp::undo]')
+    node.run_list.remove('recipe[rackspace_ntp::undo]')
   end
-  only_if { node.run_list.include?('recipe[ntp::default]') }
+  only_if { node.run_list.include?('recipe[rackspace_ntp::default]') }
 end

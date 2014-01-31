@@ -1,16 +1,17 @@
 require 'spec_helper'
 
-describe 'ntp::apparmor' do
-  let(:chef_run) { ChefSpec::ChefRunner.new.converge('recipe[ntp::apparmor]') }
+describe 'rackspace_ntp::apparmor' do
+  let(:chef_run) { ChefSpec::Runner.new.converge('rackspace_ntp::apparmor') }
 
   it 'creates the apparmor file' do
     expect(chef_run).to create_cookbook_file '/etc/apparmor.d/usr.sbin.ntpd'
     file = chef_run.cookbook_file('/etc/apparmor.d/usr.sbin.ntpd')
-    expect(file).to be_owned_by('root', 'root')
+    expect(file.owner).to eq('root')
+    expect(file.group).to eq('root')
   end
 
   it 'restarts the apparmor service' do
-    chef_run.cookbook_file('/etc/apparmor.d/usr.sbin.ntpd').should notify('service[apparmor]', :restart)
+    chef_run.cookbook_file('/etc/apparmor.d/usr.sbin.ntpd').should notify('service[apparmor]').to(:restart)
   end
 
 end

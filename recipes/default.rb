@@ -1,10 +1,12 @@
 #
-# Cookbook Name:: ntp
+# Cookbook Name:: rackspace_ntp
 # Recipe:: default
 # Author:: Joshua Timberman (<joshua@opscode.com>)
 # Author:: Tim Smith (<tsmith@limelight.com>)
+# Author:: Christopher Coffey (<christopher.coffey@rackspace.com>)
 #
 # Copyright 2009-2013, Opscode, Inc
+# Cofeyright 2014, Rackspace, US, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,32 +20,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-if platform_family?('windows')
-  include_recipe 'ntp::windows_client'
-else
-  node['ntp']['packages'].each do |ntppkg|
-    package ntppkg
-  end
-
-  [node['ntp']['varlibdir'], node['ntp']['statsdir']].each do |ntpdir|
-    directory ntpdir do
-      owner node['ntp']['var_owner']
-      group node['ntp']['var_group']
-      mode  '0755'
-    end
-  end
-
-  cookbook_file node['ntp']['leapfile'] do
-    owner node['ntp']['conf_owner']
-    group node['ntp']['conf_group']
-    mode  '0644'
-  end
-
-  include_recipe 'ntp::apparmor' if node['ntp']['apparmor_enabled']
+node['rackspace_ntp']['packages'].each do |ntppkg|
+  package ntppkg
 end
 
-unless node['ntp']['servers'].size > 0
-  node.default['ntp']['servers'] = [
+[node['rackspace_ntp']['varlibdir'], node['rackspace_ntp']['config']['statsdir']].each do |ntpdir|
+  directory ntpdir do
+    owner node['rackspace_ntp']['var_owner']
+    group node['rackspace_ntp']['var_group']
+    mode  '0755'
+  end
+end
+
+cookbook_file node['rackspace_ntp']['config']['leapfile'] do
+  owner node['rackspace_ntp']['conf_owner']
+  group node['rackspace_ntp']['conf_group']
+  mode  '0644'
+end
+
+include_recipe 'rackspace_ntp::apparmor' if node['rackspace_ntp']['apparmor_enabled']
+
+unless node['rackspace_ntp']['config']['servers'].size > 0
+  node.default['rackspace_ntp']['config']['servers'] = [
     '0.pool.ntp.org',
     '1.pool.ntp.org',
     '2.pool.ntp.org',
@@ -52,52 +50,52 @@ unless node['ntp']['servers'].size > 0
   log 'No NTP servers specified, using default ntp.org server pools'
 end
 
-if node['ntp']['listen'].nil? && !node['ntp']['listen_network'].nil?
-  if node['ntp']['listen_network'] == 'primary'
-    node.set['ntp']['listen'] = node['ipaddress']
+if node['rackspace_ntp']['config']['listen'].nil? && !node['rackspace_ntp']['listen_network'].nil?
+  if node['rackspace_ntp']['listen_network'] == 'primary'
+    node.set['rackspace_ntp']['config']['listen'] = node['ipaddress']
   else
     require 'ipaddr'
-    net = IPAddr.new(node['ntp']['listen_network'])
+    net = IPAddr.new(node['rackspace_ntp']['listen_network'])
 
     node['network']['interfaces'].each do |iface, addrs|
       addrs['addresses'].each do |ip, params|
         addr = IPAddr.new(ip) if params['family'].eql?('inet') || params['family'].eql?('inet6')
-        node.set['ntp']['listen'] = addr if net.include?(addr)
+        node.set['rackspace_ntp']['config']['listen'] = addr if net.include?(addr)
       end
     end
   end
 end
 
-template node['ntp']['conffile'] do
+template node['rackspace_ntp']['conffile'] do
+  cookbook node['rackspace_ntp']['templates_cookbook']['ntp_conf']
   source   'ntp.conf.erb'
-  owner    node['ntp']['conf_owner']
-  group    node['ntp']['conf_group']
+  owner    node['rackspace_ntp']['config']['conf_owner']
+  group    node['rackspace_ntp']['config']['conf_group']
   mode     '0644'
-  notifies :restart, "service[#{node['ntp']['service']}]"
+  notifies :restart, "service[#{node['rackspace_ntp']['service']}]"
 end
 
-if node['ntp']['sync_clock']
-  execute "Stop #{node['ntp']['service']} in preparation for ntpdate" do
+if node['rackspace_ntp']['sync_clock']
+  execute "Stop #{node['rackspace_ntp']['service']} in preparation for ntpdate" do
     command '/bin/true'
     action :run
-    notifies :stop, "service[#{node['ntp']['service']}]", :immediately
+    notifies :stop, "service[#{node['rackspace_ntp']['service']}]", :immediately
   end
 
   execute 'Force sync system clock with ntp server' do
     command 'ntpd -q'
     action :run
-    notifies :start, "service[#{node['ntp']['service']}]"
+    notifies :start, "service[#{node['rackspace_ntp']['service']}]"
   end
 end
 
-if node['ntp']['sync_hw_clock'] && !platform_family?('windows')
-  execute 'Force sync hardware clock with system clock' do
-    command 'hwclock --systohc'
-    action :run
-  end
+execute 'Force sync hardware clock with system clock' do
+  command 'hwclock --systohc'
+  action :run
+  only_if { node['rackspace_ntp']['sync_hw_clock'] }
 end
 
-service node['ntp']['service'] do
-  supports :status => true, :restart => true
+service node['rackspace_ntp']['service'] do
+  supports status: true, restart: true
   action   [:enable, :start]
 end
